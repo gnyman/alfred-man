@@ -44,7 +44,10 @@ def fetch_whatis(max_age=DEFAULT_CACHE_TTL):
     cache = cache_file('whatis.1.json')
     if os.path.isfile(cache) and (time() - os.path.getmtime(cache) < max_age):
         return json.load(open(cache, 'r'))
-    raw_pages = subprocess.check_output(WHATIS_COMMAND, shell=True)
+    try:
+    	raw_pages = subprocess.check_output(WHATIS_COMMAND, shell=True)
+    except subprocess.CalledProcessError as e:
+    	raw_pages = e.output
     pagelist = map(
         lambda x: map(
             lambda y: y.strip(),
